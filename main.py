@@ -2,13 +2,27 @@ import random
 import time
 from datetime import datetime
 import psycopg2
+import json
 
-# Параметры подключения к базе данных PostgreSQL
-DB_HOST = "localhost"
-DB_PORT = 5432
-DB_NAME = "subscribes"
-DB_USER = "postgres"
-DB_PASSWORD = "5433"
+# Открываем файл с настройками подключения в формате JSON
+with open('settings.json') as json_file:
+    config = json.load(json_file)
+
+# Извлекаем значения из JSON файла
+host = config['host']
+port = config['port']
+database = config['database']
+user = config['user']
+password = config['password']
+
+# Подключение к базе данных PostgreSQL
+conn = psycopg2.connect(
+    host=host,
+    port=port,
+    database=database,
+    user=user,
+    password=password
+)
 
 # Название региона
 REGION = "USA"
@@ -19,7 +33,7 @@ def generate_count():
 
 # Отправка записи в базу данных
 def send_to_db(region, count):
-    conn = psycopg2.connect(host=DB_HOST, port=DB_PORT, dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD)
+    conn = psycopg2.connect(host=host, port=port, dbname=database, user=user, password=password)
     cursor = conn.cursor()
 
     # Вставка новой записи в таблицу
