@@ -1,0 +1,25 @@
+{
+  "DbConfig":
+  {
+    "host": "localhost",
+    "port": "5432",
+    "database": "subscribes",
+    "user": "postgres",
+    "password": "5433"
+  },
+  "Region": "USA",
+  "BusinessConfig":
+  {
+    "Subscribe":
+    {
+      "min": "0",
+      "max": "50"
+    },
+    "Frequency":
+    {
+      "min": "60",
+      "max": "300"
+    }
+  }
+}
+
