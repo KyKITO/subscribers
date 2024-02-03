@@ -1,20 +1,33 @@
 import random
+import psycopg2
 import time
 from datetime import datetime
-import psycopg2
 import json
 
 # Открываем файл с настройками подключения в формате JSON
-with open('settings.json') as json_file:
+with open('config.json') as json_file:
     config = json.load(json_file)
 
 # Извлекаем значения из JSON файла
-host = config['host']
-port = config['port']
-database = config['database']
-user = config['user']
-password = config['password']
 
+# Переменные для подключения к БД
+db_config = config['DbConfig']
+host = db_config['host']
+port = db_config['port']
+database = db_config['database']
+user = db_config['user']
+password = db_config['password']
+
+# Переменные для кол-во подписчиков
+countMin = config['BusinessConfig']['Subscribe']['min']
+countMax = config['BusinessConfig']['Subscribe']['max']
+
+# Переменная для региона
+REGION = config['Region']
+
+# Переменные для частоты
+frequencyMin = config['BusinessConfig']['Frequency']['min']
+frequencyMax = config['BusinessConfig']['Frequency']['max']
 # Подключение к базе данных PostgreSQL
 conn = psycopg2.connect(
     host=host,
@@ -24,16 +37,13 @@ conn = psycopg2.connect(
     password=password
 )
 
-# Название региона
-REGION = "USA"
 
 # Генерация рандомного числа от 0 до 50
 def generate_count():
-    return random.randint(0, 50)
+    return random.randint(int(countMin), int(countMax))
 
 # Отправка записи в базу данных
 def send_to_db(region, count):
-    conn = psycopg2.connect(host=host, port=port, dbname=database, user=user, password=password)
     cursor = conn.cursor()
 
     # Вставка новой записи в таблицу
@@ -43,13 +53,12 @@ def send_to_db(region, count):
 
     conn.commit()
     cursor.close()
-    conn.close()
 
-# Главная функция приложения
+# Главная функция приложен
 def main():
     while True:
         # Генерация частоты отправки в базу данных
-        frequency = random.randint(60, 300)
+        frequency = random.randint(int(frequencyMin), int(frequencyMax))
 
         # Генерация рандомного числа
         count = generate_count()
